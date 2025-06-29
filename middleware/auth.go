@@ -8,8 +8,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// authMiddleware verifies the JWT token and sets the user ID in the context
-func authMiddleware() gin.HandlerFunc {
+// AuthMiddleware verifies the JWT token and sets the user ID in the context
+func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Get the Authorization header
 		authHeader := c.GetHeader("Authorization")

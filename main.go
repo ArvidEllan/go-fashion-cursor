@@ -6,6 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
+	"virtual-tryon/config"
+	"virtual-tryon/middleware"
 )
 
 func main() {
@@ -13,6 +16,9 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
 	}
+
+	// Initialize database connection
+	config.InitializeDatabase()
 
 	// Initialize router
 	router := gin.Default()
@@ -59,17 +65,17 @@ func initializeRoutes(router *gin.Engine) {
 		// User routes
 		user := api.Group("/user")
 		{
-			user.GET("/profile", authMiddleware(), handleGetProfile)
-			user.PUT("/profile", authMiddleware(), handleUpdateProfile)
+			user.GET("/profile", middleware.AuthMiddleware(), handleGetProfile)
+			user.PUT("/profile", middleware.AuthMiddleware(), handleUpdateProfile)
 		}
 
 		// Try-on routes
 		tryon := api.Group("/try-on")
 		{
-			tryon.POST("/upload", authMiddleware(), handleUploadPhoto)
-			tryon.POST("/process", authMiddleware(), handleProcessTryOn)
-			tryon.GET("/history", authMiddleware(), handleGetTryOnHistory)
-			tryon.DELETE("/history/:id", authMiddleware(), handleDeleteTryOnHistory)
+			tryon.POST("/upload", middleware.AuthMiddleware(), handleUploadPhoto)
+			tryon.POST("/process", middleware.AuthMiddleware(), handleProcessTryOn)
+			tryon.GET("/history", middleware.AuthMiddleware(), handleGetTryOnHistory)
+			tryon.DELETE("/history/:id", middleware.AuthMiddleware(), handleDeleteTryOnHistory)
 		}
 
 		// Product routes
@@ -82,8 +88,8 @@ func initializeRoutes(router *gin.Engine) {
 		// Cart routes
 		cart := api.Group("/cart")
 		{
-			cart.POST("", authMiddleware(), handleAddToCart)
-			cart.GET("", authMiddleware(), handleGetCart)
+			cart.POST("", middleware.AuthMiddleware(), handleAddToCart)
+			cart.GET("", middleware.AuthMiddleware(), handleGetCart)
 		}
 	}
 }
